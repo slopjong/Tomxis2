@@ -7,7 +7,7 @@ public class Launcher {
 	
 	public static void main(String[] args) throws Exception{
 		
-		String webappDir = System.getenv("PORT");
+		String webappDir = System.getenv("WEBAPPDIR");
 		if(webappDir == null || webappDir.isEmpty())
 			webappDir = "src/main/webapp";
 		
