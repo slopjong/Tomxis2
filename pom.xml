@@ -1,6 +1,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  
+
+    <parent>
+        <groupId>org.apache.axis2</groupId>
+        <artifactId>axis2-parent</artifactId>
+        <version>1.6.2</version>
+        <relativePath>../parent/pom.xml</relativePath>
+    </parent>
+      
   <modelVersion>4.0.0</modelVersion>
   <groupId>de.slopjong</groupId>
   <artifactId>tomxis2</artifactId>
@@ -11,10 +18,13 @@
   <properties>
     <tomcat.version>7.0.22</tomcat.version>
     <axis2.version>1.6.2</axis2.version>
+    <webappDirectory>${project.basedir}/src/main/webapp</webappDirectory>
   </properties>
   
   <build>
+  	
     <finalName>Tomxis2</finalName>
+  
     <plugins>
     
         <plugin>
@@ -39,12 +49,40 @@
                 </execution>
             </executions>
         </plugin>
-        
+
+		<!-- this plugin must be executed before a related ant task processes -->
+		<plugin>
+        	<groupId>org.apache.maven.plugins</groupId>
+        	<artifactId>maven-dependency-plugin</artifactId>
+        	<executions>
+        		<execution>
+		            <id>unpack-axis2-webapp</id>
+		            <phase>package</phase>
+		            <goals>
+		              <goal>unpack</goal>
+		            </goals>
+		            <inherited>false</inherited>
+		            <configuration>
+			            <artifactItems>
+			            	<artifactItem>
+			            		<groupId>org.apache.axis2</groupId>
+			            		<artifactId>axis2-webapp</artifactId>
+			            		<version>${axis2.version}</version>
+			            		<type>war</type>
+			            		<overWrite>true</overWrite>
+			            		<outputDirectory>${project.build.directory}/axis2-webapp</outputDirectory>
+			            	</artifactItem>
+			            </artifactItems>	
+		            </configuration>
+          		</execution>
+        	</executions>
+        </plugin>
+                
         <plugin>
         	<!-- Process the start scripts to make the user's life a bit easier -->
         	<artifactId>maven-antrun-plugin</artifactId>
         	<executions>
-	            <!--
+        	
 	            <execution>
 		            <id>explode-axis2-webapp</id>
 		            <phase>package</phase>
@@ -54,11 +92,29 @@
 		            <inherited>false</inherited>
 		            <configuration>
 		           		<tasks>
-		           			
+		           			<!--
+		           			<copy todir="${webappDirectory}/axis2-web">
+		           				<fileset dir="${project.build.directory}/axis2-webapp/axis2-web/" />
+		           			</copy>
+		           			<copy todir="${webappDirectory}/services">
+		           				<fileset dir="${project.build.directory}/axis2-webapp/services/" />
+		           			</copy>
+		           			<copy todir="${webappDirectory}/classes">
+		           				<fileset dir="${project.build.directory}/axis2-webapp/classes/" />
+		           			</copy>
+		           			<copy todir="${webappDirectory}/modules">
+		           				<fileset dir="${project.build.directory}/axis2-webapp/modules/" />
+		           			</copy>
+		           			<copy todir="${webappDirectory}/lib">
+		           				<fileset dir="${project.build.directory}/axis2-webapp/lib/" />
+		           			</copy>
+		           			-->
+		           			<move todir="${webappDirectory}">
+		           				<fileset dir="${project.build.directory}/axis2-webapp" />
+		           			</move>
 		           		</tasks>
 		            </configuration>
 	            </execution>
-	            -->
 	            <execution>
 		            <id>create-start-script</id>
 		            <phase>package</phase>
@@ -101,6 +157,18 @@
 		           		</tasks>
 		            </configuration>
 	            </execution>
+	            <!--
+	            <execution>
+          			<id>copy-axis2-webapp</id>
+          			<phase>package</phase>
+          			<goals><goal>run</goal></goals>
+          			<configuration>
+          				<tasks>
+          					<copy></copy>
+          				</tasks>
+          			</configuration>
+          		</execution>
+          		-->
         	</executions>
         	<dependencies>
         		<!--
@@ -113,7 +181,7 @@
         	</dependencies>
         </plugin>
 		
-	</plugins>
+    </plugins>
   </build>
     
   <dependencies>
@@ -152,21 +220,32 @@
         <version>${tomcat.version}</version>
     </dependency>
  
- 	<!-- Axis2 dependencies -->
+ 	<!-- Axis2 dependencies, if something axis2-related doesn't work, check [0] and [1] if dependencies are missing.
+ 	
+    	 [0] http://search.maven.org/remotecontent?filepath=org/apache/axis2/axis2-webapp/1.6.2/axis2-webapp-1.6.2.pom
+    	 [1] http://search.maven.org/remotecontent?filepath=org/apache/axis2/axis2-parent/1.6.2/axis2-parent-1.6.2.pom	 
+     -->    
+     
     <dependency>
     	<groupId>org.apache.axis2</groupId>
-    	<artifactId>axis2-webapp</artifactId>
+    	<artifactId>axis2-parent</artifactId>
     	<version>${axis2.version}</version>
-    	<scope>runtime</scope>
-    	<type>war</type>
-    </dependency>
-    <dependency>
-    	<groupId>org.apache.axis2</groupId>
-    	<artifactId>axis2</artifactId>
-    	<version>${axis2.version}</version>
+    	<type>pom</type>
     </dependency>
     
+	<!-- Axis2 has always been shipped with Sun's implementations of
+	     JavaMail and JAF, although Axiom depends on (and has been tested
+	     with) Geronimo's implementations. This should probably reevaluated. -->
+	<!--
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+            <version>${javax.mail.version}</version>
+        </dependency>
+	-->    
+
     <!-- Other dependencies -->
+    <!--
     <dependency>
     	<groupId>org.apache.directory.studio</groupId>
     	<artifactId>org.apache.commons.logging</artifactId>
@@ -177,6 +256,7 @@
     	<artifactId>log4j</artifactId>
     	<version>1.2.16</version>
     </dependency>
+    -->
     
   </dependencies>
   

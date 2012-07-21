@@ -9,3 +9,9 @@
 .classpath
 .project
 .settings/
+
+# Build
+target
+src/main/webapp
+run
+tomcat.*
