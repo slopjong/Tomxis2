@@ -125,8 +125,8 @@
 		            <inherited>false</inherited>
 		            <configuration>
 		           		<tasks>
-		           			<move file="${confDirectory}/web.xml" todir="${webappDirectory}/WEB-INF" />
-		           			<move file="${confDirectory}/axis2.xml" todir="${webappDirectory}/WEB-INF/conf" />
+		           			<copy overwrite="true" file="${confDirectory}/web.xml" todir="${webappDirectory}/WEB-INF" />
+		           			<copy overwrite="true" file="${confDirectory}/axis2.xml" todir="${webappDirectory}/WEB-INF/conf" />
 		           		</tasks>
 		            </configuration>
 	            </execution>
