@@ -19,6 +19,7 @@
     <tomcat.version>7.0.22</tomcat.version>
     <axis2.version>1.6.2</axis2.version>
     <webappDirectory>${project.basedir}/src/main/webapp</webappDirectory>
+    <confDirectory>${project.basedir}/src/main/conf</confDirectory>
   </properties>
   
   <build>
@@ -112,6 +113,20 @@
 		           			<move todir="${webappDirectory}">
 		           				<fileset dir="${project.build.directory}/axis2-webapp" />
 		           			</move>
+		           		</tasks>
+		            </configuration>
+	            </execution>
+	            <execution>
+		            <id>copy-configs</id>
+		            <phase>package</phase>
+		            <goals>
+		              <goal>run</goal>
+		            </goals>
+		            <inherited>false</inherited>
+		            <configuration>
+		           		<tasks>
+		           			<move file="${confDirectory}/web.xml" todir="${webappDirectory}/WEB-INF" />
+		           			<move file="${confDirectory}/axis2.xml" todir="${webappDirectory}/WEB-INF/conf" />
 		           		</tasks>
 		            </configuration>
 	            </execution>
