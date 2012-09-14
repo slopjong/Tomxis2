@@ -25,7 +25,6 @@ Run it
 ```
 cd Tomxis2
 mvn package
-chmod 755 target/bin/webapp
 target/bin/webapp
 ```
 

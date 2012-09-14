@@ -13,5 +13,4 @@
 # Build
 target
 src/main/webapp
-run
 tomcat.*
