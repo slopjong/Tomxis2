@@ -1,0 +1,1 @@
+This init script doesn't work yet. A java daemon must be used while Tomxis2 must implement a daemon interface. See the issue "Implement the daemon interface".
